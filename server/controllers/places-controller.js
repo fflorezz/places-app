@@ -1,4 +1,5 @@
 const { v4: uuid } = require("uuid");
+const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
 
@@ -16,6 +17,8 @@ let DUMMY_PLACES = [
   },
 ];
 
+///////////////////////////////////////////////
+
 const getPlaceById = (req, res, next) => {
   const placeId = req.params.pid;
   const place = DUMMY_PLACES.find((place) => place.id === placeId);
@@ -26,6 +29,8 @@ const getPlaceById = (req, res, next) => {
 
   res.json({ place });
 };
+
+///////////////////////////////////////////////
 
 const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
@@ -42,7 +47,15 @@ const getPlacesByUserId = (req, res, next) => {
   res.json({ places });
 };
 
+///////////////////////////////////////////////
+
 const createPlace = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   const { title, description, coordinates, address, creator } = req.body;
   const createdPlace = {
     id: uuid(),
@@ -58,7 +71,15 @@ const createPlace = (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
+///////////////////////////////////////////////
+
 const updatePlaceById = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   const placeId = req.params.pid;
   const place = DUMMY_PLACES.find((place) => place.id === placeId);
 
@@ -81,6 +102,8 @@ const updatePlaceById = (req, res, next) => {
   res.status(200).json({ message: "updated place", updatedPlace });
 };
 
+///////////////////////////////////////////////
+
 const deletePlaceById = (req, res, next) => {
   const placeId = req.params.pid;
   const place = DUMMY_PLACES.find((place) => place.id === placeId);
@@ -95,6 +118,8 @@ const deletePlaceById = (req, res, next) => {
 
   res.status(200).json({ message: "deleted place", place });
 };
+
+///////////////////////////////////////////////
 
 exports.getPLaceById = getPlaceById;
 exports.getPlacesByUserId = getPlacesByUserId;
