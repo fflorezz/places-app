@@ -12,8 +12,8 @@ router.post(
   [
     check("name").not().isEmpty().withMessage("name is required"),
     check("password")
-      .isLength({ min: 5 })
-      .withMessage("password must bee at least 5 char long"),
+      .isLength({ min: 6 })
+      .withMessage("password must bee at least 6 char long"),
     check("email").isEmail().withMessage("email is required"),
   ],
   signUp

@@ -8,11 +8,21 @@ const placesRoutes = require("./routes/places-route");
 const usersRoutes = require("./routes/users-route");
 
 const url =
-  "mongodb+srv://mongouser:W8KdGanIKy1PDZeG@cluster0-ufpqh.mongodb.net/places?retryWrites=true&w=majority";
+  "mongodb+srv://mongouser:W8KdGanIKy1PDZeG@cluster0-ufpqh.mongodb.net/mern?retryWrites=true&w=majority";
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, x-Requested_with, Content-Type, Accept, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
+  next();
+});
 
 app.use("/api/places", placesRoutes);
 
@@ -36,6 +46,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true,
   })
   .then(() => {
     app.listen(5000);
