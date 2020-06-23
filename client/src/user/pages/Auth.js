@@ -73,6 +73,9 @@ const Auth = () => {
           password: formState.inputs.password.value,
         }),
       });
+      if (data) {
+        auth.login(data.user.id);
+      }
     } else {
       const data = await sendRequest({
         url: "http://localhost:5000/api/users/signup",

@@ -33,7 +33,7 @@ export const useFetchData = () => {
         }
         return data;
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
         setError(error.message);
       } finally {
         setIsLoading(false);
