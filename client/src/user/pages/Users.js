@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import UsersList from "../components/UsersList";
 import ErrorModal from "./../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "./../../shared/components/UIElements/LoadingSpinner";
-import { useFetchData } from "./../../shared/hooks/UseFetchData";
+import { useFetchData } from "./../../shared/hooks/useFetchData";
 
 const Users = () => {
   const { isLoading, error, sendRequest, errorHandler } = useFetchData();
@@ -14,7 +14,9 @@ const Users = () => {
       const data = await sendRequest({
         url: "http://localhost:5000/api/users",
       });
-      setUsers(data.users);
+      if (data) {
+        setUsers(data.users);
+      }
     };
     fetchUsers();
   }, [sendRequest]);

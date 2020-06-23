@@ -7,8 +7,13 @@ export const useFetchData = () => {
   const activeHttpRequests = useRef([]);
 
   const sendRequest = useCallback(
-    async ({ url, method = "GET", body = null, headers = {} }) => {
+    async ({ url, method, body, headers, callback }) => {
       setIsLoading(true);
+
+      method = method ? method : "GET";
+      body = body ? body : null;
+      headers = headers ? headers : {};
+
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
 
@@ -21,16 +26,20 @@ export const useFetchData = () => {
         });
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(response.message);
+          throw new Error(data.message);
+        }
+        if (callback) {
+          callback();
         }
         return data;
       } catch (error) {
+        console.log(error.message);
         setError(error.message);
       } finally {
         setIsLoading(false);
       }
     },
-    []
+    [activeHttpRequests]
   );
 
   const errorHandler = () => {
@@ -38,9 +47,11 @@ export const useFetchData = () => {
   };
 
   useEffect(() => {
+    const requests = activeHttpRequests.current;
     return () => {
-      activeHttpRequests.current.map((request) => request.abort());
+      requests.map((request) => request.abort());
     };
-  }, []);
+  }, [activeHttpRequests]);
+
   return { isLoading, error, sendRequest, errorHandler };
 };
