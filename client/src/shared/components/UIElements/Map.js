@@ -1,13 +1,10 @@
 import React from "react";
 import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
 
-import { mapStyles } from "./MapStyles";
-
 import "./Map.css";
 
 const libraries = ["places"];
 const options = {
-  styles: mapStyles,
   disableDefaultUI: true,
 };
 

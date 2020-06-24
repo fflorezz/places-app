@@ -41,7 +41,7 @@ const getPlacesByUserId = async (req, res, next) => {
   } catch (error) {
     console.log("could not find Places", { error });
     return next(
-      new HttpError("Could not find a place for the provided id", 500)
+      new HttpError("Could not find a place for the provided user id", 500)
     );
   }
 
