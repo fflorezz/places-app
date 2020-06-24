@@ -37,6 +37,10 @@ router.patch(
     check("description")
       .isLength({ min: 5 })
       .withMessage("description need at least minimum 5 characters"),
+    check("address")
+      .not()
+      .isEmpty()
+      .withMessage("description need at least minimum 5 characters"),
   ],
   updatePlaceById
 );

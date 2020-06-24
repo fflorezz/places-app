@@ -52,7 +52,7 @@ const NewPlace = () => {
       }),
     });
     if (data) {
-      history.push("/");
+      history.push(`/${userId}/places`);
     }
   };
 

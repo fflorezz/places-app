@@ -121,13 +121,14 @@ const updatePlaceById = async (req, res, next) => {
   }
 
   const placeId = req.params.pid;
-  const { title, description } = req.body;
+  const { title, description, address } = req.body;
 
   let updatedPlace;
   try {
     const place = await Place.findById(placeId);
     place.title = title;
     place.description = description;
+    place.address = address;
     updatedPlace = await place.save();
   } catch (error) {
     console.log("could not update place", { error });

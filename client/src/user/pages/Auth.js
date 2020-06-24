@@ -15,24 +15,23 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "./../../shared/components/UIElements/LoadingSpinner";
 import { useFetchData } from "../../shared/hooks/useFetchData";
 
+const INITIAL_STATE = {
+  email: {
+    value: "",
+    isValid: false,
+  },
+  password: {
+    value: "",
+    isValid: false,
+  },
+};
+
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const { isLoading, error, sendRequest, errorHandler } = useFetchData();
 
-  const [formState, inputHandler, setFormData] = useForm(
-    {
-      email: {
-        value: "",
-        isValid: false,
-      },
-      password: {
-        value: "",
-        isValid: false,
-      },
-    },
-    false
-  );
+  const [formState, inputHandler, setFormData] = useForm(INITIAL_STATE, false);
 
   const switchModeHandler = () => {
     if (!isLoginMode) {
