@@ -26,7 +26,7 @@ const UserPlaces = () => {
     <>
       {isLoading && (
         <div className='center'>
-          <LoadingSpinner />
+          <LoadingSpinner asOverlay />
         </div>
       )}
       ;{!isLoading && places && <PlaceList items={places} />}

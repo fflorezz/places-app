@@ -7,7 +7,9 @@ import Map from "../../shared/components/UIElements/Map";
 import { AuthContext } from "../../shared/context/auth-context";
 import "./PlaceItem.css";
 import { useFetchData } from "./../../shared/hooks/useFetchData";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import ErrorModal from "./../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "./../../shared/components/UIElements/LoadingSpinner";
 
 const PlaceItem = (props) => {
   const history = useHistory();
@@ -34,13 +36,14 @@ const PlaceItem = (props) => {
       method: "DELETE",
     });
     if (data) {
-      console.log(data);
       history.go();
     }
   };
 
   return (
-    <React.Fragment>
+    <>
+      <ErrorModal error={error} onClear={errorHandler} />
+
       <Modal
         show={showMap}
         onCancel={closeMapHandler}
@@ -76,6 +79,7 @@ const PlaceItem = (props) => {
       </Modal>
       <li className='place-item'>
         <Card className='place-item__content'>
+          {isLoading && <LoadingSpinner asOverlay />}
           <div className='place-item__image'>
             <img src={props.image} alt={props.title} />
           </div>
@@ -88,11 +92,11 @@ const PlaceItem = (props) => {
             <Button inverse onClick={openMapHandler}>
               VIEW ON MAP
             </Button>
-            {auth.isLoggedIn && (
+            {auth.userId === props.creatorId && (
               <Button to={`/places/${props.id}`}>EDIT</Button>
             )}
 
-            {auth.isLoggedIn && (
+            {auth.userId === props.creatorId && (
               <Button danger onClick={showDeleteWarningHandler}>
                 DELETE
               </Button>
@@ -100,7 +104,7 @@ const PlaceItem = (props) => {
           </div>
         </Card>
       </li>
-    </React.Fragment>
+    </>
   );
 };
 

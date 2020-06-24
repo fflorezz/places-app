@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import UserItem from "./UserItem";
 import Card from "../../shared/components/UIElements/Card";
 import "./UsersList.css";
+import { AuthContext } from "./../../shared/context/auth-context";
 
 const UsersList = (props) => {
+  const { userId } = useContext(AuthContext);
+
   if (props.items.length === 0) {
     return (
       <div className='center'>
@@ -17,15 +20,19 @@ const UsersList = (props) => {
 
   return (
     <ul className='users-list'>
-      {props.items.map((user) => (
-        <UserItem
-          key={user.id}
-          id={user.id}
-          image={user.image}
-          name={user.name}
-          placeCount={user.places.length}
-        />
-      ))}
+      {props.items.map((user) =>
+        user.id === userId ? (
+          ""
+        ) : (
+          <UserItem
+            key={user.id}
+            id={user.id}
+            image={user.image}
+            name={user.name}
+            placeCount={user.places.length}
+          />
+        )
+      )}
     </ul>
   );
 };
