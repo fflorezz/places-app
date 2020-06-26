@@ -13,8 +13,13 @@ import { useFetchData } from "./../../shared/hooks/useFetchData";
 import { AuthContext } from "./../../shared/context/auth-context";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ImageUpload from "./../../shared/components/FormElements/ImageUpload";
 
 const INITIAL_STATE = {
+  image: {
+    value: null,
+    isValid: false,
+  },
   title: {
     value: "",
     isValid: false,
@@ -38,18 +43,17 @@ const NewPlace = () => {
   const placeSubmitHandler = async (event) => {
     event.preventDefault();
 
+    const formData = new FormData();
+    formData.append("title", formState.inputs.title.value);
+    formData.append("description", formState.inputs.description.value);
+    formData.append("address", formState.inputs.address.value);
+    formData.append("image", formState.inputs.image.value);
+    formData.append("creator", userId);
+
     const data = await sendRequest({
       url: "http://localhost:5000/api/places",
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: formState.inputs.title.value,
-        description: formState.inputs.description.value,
-        address: formState.inputs.address.value,
-        creator: userId,
-      }),
+      body: formData,
     });
     if (data) {
       history.push(`/${userId}/places`);
@@ -61,6 +65,7 @@ const NewPlace = () => {
       <ErrorModal error={error} onClear={errorHandler} />
       <form className='place-form' onSubmit={placeSubmitHandler}>
         {isLoading && <LoadingSpinner asOverlay />}
+
         <Input
           id='title'
           element='input'
@@ -85,6 +90,12 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText='Please enter a valid address.'
           onInput={inputHandler}
+        />
+        <ImageUpload
+          center
+          id='image'
+          onInput={inputHandler}
+          errorText='Please provide animage'
         />
         <Button type='submit' disabled={!formState.isValid}>
           ADD PLACE

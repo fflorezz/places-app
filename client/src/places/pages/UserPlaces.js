@@ -29,7 +29,7 @@ const UserPlaces = () => {
           <LoadingSpinner asOverlay />
         </div>
       )}
-      ;{!isLoading && places && <PlaceList items={places} />}
+      {!isLoading && places && <PlaceList items={places} />}
     </>
   );
 };

@@ -1,31 +1,25 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const logger = require("morgan");
+const fs = require("fs");
+const path = require("path");
 
 const HttpError = require("./models/http-error");
-
 const placesRoutes = require("./routes/places-route");
 const usersRoutes = require("./routes/users-route");
-
 const url =
   "mongodb+srv://mongouser:W8KdGanIKy1PDZeG@cluster0-ufpqh.mongodb.net/mern?retryWrites=true&w=majority";
 
 const app = express();
 
+app.use(logger("dev"));
 app.use(bodyParser.json());
+app.use(cors());
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, x-Requested_with, Content-Type, Accept, Authorization"
-  );
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
-  next();
-});
-
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 app.use("/api/places", placesRoutes);
-
 app.use("/api/users", usersRoutes);
 
 app.use((req, res, next) => {
@@ -34,6 +28,11 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, () => {
+      console.log(error);
+    });
+  }
   if (res.headerSent) {
     return next(error);
   }

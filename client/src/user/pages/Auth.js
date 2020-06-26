@@ -14,6 +14,7 @@ import "./Auth.css";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "./../../shared/components/UIElements/LoadingSpinner";
 import { useFetchData } from "../../shared/hooks/useFetchData";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 const INITIAL_STATE = {
   email: {
@@ -30,7 +31,6 @@ const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const { isLoading, error, sendRequest, errorHandler } = useFetchData();
-
   const [formState, inputHandler, setFormData] = useForm(INITIAL_STATE, false);
 
   const switchModeHandler = () => {
@@ -39,6 +39,7 @@ const Auth = () => {
         {
           ...formState.inputs,
           name: null,
+          image: null,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -48,6 +49,10 @@ const Auth = () => {
           ...formState.inputs,
           name: {
             value: "",
+            isValid: false,
+          },
+          image: {
+            value: null,
             isValid: false,
           },
         },
@@ -76,17 +81,16 @@ const Auth = () => {
         auth.login(data.user.id);
       }
     } else {
+      const formData = new FormData();
+      formData.append("email", formState.inputs.email.value);
+      formData.append("name", formState.inputs.name.value);
+      formData.append("password", formState.inputs.password.value);
+      formData.append("image", formState.inputs.image.value);
+
       const data = await sendRequest({
         url: "http://localhost:5000/api/users/signup",
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formState.inputs.name.value,
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value,
-        }),
+        body: formData,
       });
       if (data) {
         auth.login(data.user.id);
@@ -102,6 +106,9 @@ const Auth = () => {
         <h2>Login Required</h2>
         <hr />
         <form onSubmit={authSubmitHandler}>
+          {!isLoginMode && (
+            <ImageUpload center id='image' onInput={inputHandler} avatar />
+          )}
           {!isLoginMode && (
             <Input
               element='input'

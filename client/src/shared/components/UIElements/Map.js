@@ -2,6 +2,7 @@ import React from "react";
 import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
 
 import "./Map.css";
+import LoadingSpinner from "./LoadingSpinner";
 
 const libraries = ["places"];
 const options = {
@@ -15,7 +16,7 @@ const Map = ({ zoom, center, className, style }) => {
   });
 
   if (loadError) return "Error loading maps";
-  if (!isLoaded) return "Loading map";
+  if (!isLoaded) return <LoadingSpinner />;
 
   return (
     <div className={`map ${className}`} style={style}>

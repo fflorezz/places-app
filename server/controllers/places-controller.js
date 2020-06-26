@@ -5,7 +5,6 @@ const { validationResult } = require("express-validator");
 const getCoordsForAddress = require("../utils/location");
 const Place = require("../models/place");
 const User = require("../models/user");
-
 const HttpError = require("../models/http-error");
 
 const getPlaceById = async (req, res, next) => {
@@ -65,14 +64,16 @@ const createPlace = async (req, res, next) => {
     return next(new HttpError(errors.array()[0].msg, 500));
   }
 
-  const { title, description, address, image, creator } = req.body;
+  const { title, description, address, creator } = req.body;
 
   let coordinates;
   try {
     coordinates = await getCoordsForAddress(address);
-  } catch ({ error }) {
+  } catch (error) {
     console.log("getCoords", { error });
-    return next(error);
+    return next(
+      new HttpError("could not find location for the specified address", 404)
+    );
   }
 
   const createdPlace = new Place({
@@ -80,8 +81,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Metro_de_Medell%C3%ADn%2C_Colombia.jpg/800px-Metro_de_Medell%C3%ADn%2C_Colombia.jpg",
+    image: req.file.path,
     creator,
   });
 
